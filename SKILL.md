@@ -176,6 +176,34 @@ row2_y = START_Y + row1_max_h + GAP
 
 This applies to any layout with variable-size elements — timelines, grids, stacked sections. Always derive the next position from the actual computed height of the previous element.
 
+### Rule 9: Use `#1e1e1e` for text that must be readable in both themes
+
+Excalidraw's dark mode inverts colors. `#ffffff` (white) becomes `#000000` (black), making text on colored backgrounds unreadable in dark mode. Use `#1e1e1e` instead — it appears dark in light mode and gets inverted to near-white in dark mode. Stroke colors like `#1971c2` also invert to lighter variants automatically.
+
+```python
+# BAD: white text disappears in dark mode (inverts to black)
+title_color = "#ffffff"
+
+# GOOD: near-black inverts to near-white
+title_color = "#1e1e1e"
+```
+
+### Rule 10: Line-wrap long text and pad from box edges
+
+Text that fits at a given font size in standard fonts may overflow in Excalidraw's Virgil font, which is significantly wider. Pre-wrap long titles with `\n` and pad text inward from box edges:
+
+```python
+# Pad text 15px from each box edge
+text_x = box_x + 15
+text_width = box_width - 30
+text_y = box_y + 12  # top padding
+
+# Pre-wrap long titles
+title = "3. Architect for\nScalability"  # not "3. Architect for Scalability"
+```
+
+**Tip:** Use `fillStyle: "solid"` instead of `"hachure"` for blocks with text overlaid — diagonal hachure lines reduce text readability.
+
 ---
 
 ## Excalidraw JSON Element Reference
@@ -291,6 +319,9 @@ Arrow `points` are **relative to the element's x,y**. Always start with `[0,0]`.
 | Elements overlap after adjustments | Use systematic position calculation, print & verify all y-ranges |
 | Diagram looks same size despite scaling | SVG is `width: 100%` — only aspect ratio changes perceived size |
 | Large gap between grid rows/columns | Use dynamic row heights calculated from content, not fixed values |
+| Text unreadable in dark mode | Use `#1e1e1e` instead of `#ffffff` — Excalidraw inverts colors in dark mode |
+| Text overflows box in Excalidraw rendering | Pre-wrap with `\n`, pad 15px from edges — Virgil font is wider than standard |
+| Hachure fill makes overlaid text hard to read | Use `fillStyle: "solid"` for blocks containing text |
 
 ---
 
