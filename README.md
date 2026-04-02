@@ -59,7 +59,20 @@ With this skill installed, Claude will generate a properly laid out `.excalidraw
 
 ## How it was made
 
-This skill was distilled from a real conversation where every layout rule was discovered through iteration. The goal: capture all those lessons so future diagrams work on the first try.
+This skill was created using the [Superpowers](https://github.com/superpowers-ai/superpowers) plugin for [Claude Code](https://claude.ai/claude-code), specifically the `superpowers:writing-skills` skill which provides a structured methodology for authoring agent skills.
+
+**The process:**
+
+1. **Real-world iteration** — While building a data engineering course notes website, I needed hand-drawn Excalidraw diagrams embedded directly in the pages. Over ~15 iterations with Claude, we discovered every layout gotcha the hard way: text overflowing boxes, arrows ending mid-block, proportional scaling doing nothing, arrowheads pointing the wrong direction, etc.
+
+2. **Skill extraction** — Once the diagram was working, I used `superpowers:writing-skills` to distill the conversation into a reusable skill. The methodology guided structuring the content with clear triggering conditions, layout rules, a common mistakes table, and a ready-to-use generator template.
+
+3. **Key tools in the pipeline:**
+   - **`excalidraw-brute-export-cli`** — Uses Playwright to drive excalidraw.com headlessly, producing pixel-perfect SVG/PNG exports with real Excalidraw fonts (Virgil)
+   - **Python** — For systematically calculating element positions and generating `.excalidraw` JSON
+   - **Playwright** — Browser automation engine used under the hood for export
+
+The goal: capture all the hard-won lessons so future diagrams work on the first try, without the trial-and-error.
 
 ## License
 
