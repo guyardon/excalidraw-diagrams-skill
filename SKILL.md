@@ -160,6 +160,22 @@ container_h = (last_inner_bottom + label_space + PADDING) - container_y
 
 Place the container's label text **inside** the zone, below the last inner box, with enough room that it doesn't overlap anything below.
 
+### Rule 8: Grid layouts must use dynamic row/column heights
+
+When placing elements in a grid (e.g. 2x2), **never use a fixed row height**. Calculate each row's height from its tallest element, then position the next row relative to that:
+
+```python
+# BAD: fixed row height creates gaps when content varies
+row2_y = START_Y + 350 + GAP  # 350 is a guess
+
+# GOOD: calculate from actual content
+row1_heights = [calc_group_height(g) for g in row1_groups]
+row1_max_h = max(row1_heights)
+row2_y = START_Y + row1_max_h + GAP
+```
+
+This applies to any layout with variable-size elements — timelines, grids, stacked sections. Always derive the next position from the actual computed height of the previous element.
+
 ---
 
 ## Excalidraw JSON Element Reference
@@ -274,6 +290,7 @@ Arrow `points` are **relative to the element's x,y**. Always start with `[0,0]`.
 | Storage label overlaps inner boxes | Place label below all inner boxes, verify y-ranges don't overlap |
 | Elements overlap after adjustments | Use systematic position calculation, print & verify all y-ranges |
 | Diagram looks same size despite scaling | SVG is `width: 100%` — only aspect ratio changes perceived size |
+| Large gap between grid rows/columns | Use dynamic row heights calculated from content, not fixed values |
 
 ---
 
