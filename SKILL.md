@@ -204,6 +204,35 @@ title = "3. Architect for\nScalability"  # not "3. Architect for Scalability"
 
 **Tip:** Use `fillStyle: "solid"` instead of `"hachure"` for blocks with text overlaid — diagonal hachure lines reduce text readability.
 
+### Rule 11: Center titles and element groups relative to diagram width
+
+Titles and grouped elements (like a row of tool pills) must be centered relative to the total diagram width, not left-aligned. Calculate the diagram's effective width from its widest row of elements, then center everything:
+
+```python
+# Center a title across the diagram
+diagram_w = max_x - min_x  # or calculate from widest element row
+title_x = (diagram_w - title_width) // 2
+title['textAlign'] = 'center'
+
+# Center a row of pills within a container
+pills_total = len(items) * PILL_W + (len(items) - 1) * PILL_GAP
+pills_start_x = container_x + (container_w - pills_total) // 2
+```
+
+### Rule 12: Keep paired/related elements visually consistent
+
+When two elements are related (e.g. DevOps → DataOps), they must have the same box dimensions, font size, and vertical alignment. Inconsistent sizing makes one element appear more important than the other.
+
+```python
+# BAD: different sizes for parallel elements
+devops_w, devops_h, devops_font = 180, 55, 20
+dataops_w, dataops_h, dataops_font = 200, 65, 24
+
+# GOOD: identical dimensions
+BOX_W, BOX_H, FONT_SZ = 190, 60, 22
+# use for both devops and dataops
+```
+
 ---
 
 ## Excalidraw JSON Element Reference
@@ -322,6 +351,8 @@ Arrow `points` are **relative to the element's x,y**. Always start with `[0,0]`.
 | Text unreadable in dark mode | Use `#1e1e1e` instead of `#ffffff` — Excalidraw inverts colors in dark mode |
 | Text overflows box in Excalidraw rendering | Pre-wrap with `\n`, pad 15px from edges — Virgil font is wider than standard |
 | Hachure fill makes overlaid text hard to read | Use `fillStyle: "solid"` for blocks containing text |
+| Title not centered over diagram | Calculate diagram width, set `title_x = (diagram_w - title_w) // 2` with `textAlign: "center"` |
+| Paired elements have inconsistent sizing | Use same width, height, and fontSize for related/parallel elements |
 
 ---
 
