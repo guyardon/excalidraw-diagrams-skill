@@ -397,6 +397,83 @@ A common temptation is to show name/description pairs as two boxes side-by-side 
 
 Instead, use **single wide boxes with the dual text element approach** (Rule 13): title text on the first line, subtitle text on the second line within the same rectangle. This is cleaner, gives text more room, and reads naturally top-to-bottom.
 
+### Rule 23: Controlling perceived diagram size through canvas width
+
+Since SVGs render at `width: 100%` of their container, you cannot make a diagram "appear smaller" by scaling all coordinates proportionally — the SVG stretches to fill the same space regardless. Three approaches that **don't work**:
+
+1. **Proportional scaling** (halving all x, y, w, h values) — changes nothing visually. The SVG viewBox shrinks but the browser stretches it right back to 100% width.
+2. **CSS max-width wrappers** (`<div style="max-width: 55%">`) — constrains the diagram but leaves awkward whitespace and breaks the full-width visual consistency of the page.
+3. **Centering small content in a wide canvas** (e.g. 380px content centered in 750px canvas) — creates dead space on both sides while the content blocks remain the same apparent size.
+
+**The correct approach:** Widen the canvas AND stretch all content blocks to fill it. When the canvas is wider, each element occupies a smaller fraction of the container width, making everything appear proportionally smaller.
+
+```python
+# BAD: narrow canvas, elements fill 100% → appears large
+CANVAS_W = 460
+WIDE_W = 460
+PAIR_W = 220
+
+# BAD: wide canvas, narrow content centered → dead whitespace
+CANVAS_W = 750
+CONTENT_W = 380
+OFFSET_X = (CANVAS_W - CONTENT_W) // 2
+PAIR_W = 180  # same apparent size, just with margins
+
+# GOOD: wide canvas, content stretches to fill → appears smaller
+CANVAS_W = 700
+PAD_X = 20
+CONTENT_W = CANVAS_W - 2 * PAD_X  # 660
+WIDE_W = CONTENT_W                 # headers span full width
+PAIR_W = (CONTENT_W - PAIR_GAP) // 2  # pairs fill half each
+```
+
+The key insight: **elements must fill the canvas width**. A wider canvas only makes things smaller if the content stretches to match. Wide headers should span full content width. Pair boxes should be calculated as `(content_w - gap) // 2`, not hardcoded.
+
+### Rule 24: Calculate box widths dynamically from canvas width
+
+Never hardcode box widths. Derive them from the canvas/content width so they fill available space and scale correctly when the canvas changes:
+
+```python
+CANVAS_W = 700
+PAD_X = 20
+CONTENT_W = CANVAS_W - 2 * PAD_X
+
+# Wide/header boxes: span full content width
+WIDE_W = CONTENT_W
+
+# Pair boxes: each fills half the content width minus the gap
+PAIR_GAP = 24
+PAIR_W = (CONTENT_W - PAIR_GAP) // 2
+
+# Triple columns: each fills a third
+COL_GAP = 30
+COL_W = (CONTENT_W - 2 * COL_GAP) // 3
+
+# Positions derived from widths
+LEFT_X = PAD_X
+RIGHT_X = LEFT_X + PAIR_W + PAIR_GAP
+WIDE_X = PAD_X
+```
+
+This ensures that if you change `CANVAS_W` to make the diagram appear larger or smaller, all elements resize proportionally while maintaining their layout relationships.
+
+### Rule 25: Always calculate text height from actual line count
+
+When placing free text (subtitles, labels, notes), always calculate height from the **actual number of lines** in the text string. A common bug: calculating height for 1 line when the text contains `\n` and is actually 2+ lines. The bottom lines get cropped by the SVG viewBox.
+
+```python
+# BAD: hardcoded line count doesn't match text
+sub_text = "Single codebase,\ntightly coupled"  # 2 lines!
+sub_h = math.ceil(1 * 16 * 1.25)  # calculated for 1 line → crops "tightly coupled"
+
+# GOOD: derive line count from the text itself
+sub_text = "Single codebase,\ntightly coupled"
+num_lines = sub_text.count('\n') + 1  # 2
+sub_h = math.ceil(num_lines * 16 * 1.25)  # correct height for 2 lines
+```
+
+This applies to all text elements — bound or free. For bound text, the `txt()` helper usually handles this automatically via the `cid` branch, but for free-floating subtitles (Rule 13) you must calculate it yourself.
+
 ### Rule 10: Line-wrap long text and pad from box edges
 
 Text that fits at a given font size in standard fonts may overflow in Excalidraw's Virgil font, which is significantly wider. Pre-wrap long titles with `\n` and pad text inward from box edges:
@@ -571,6 +648,11 @@ Arrow `points` are **relative to the element's x,y**. Always start with `[0,0]`.
 | Title too close or too far from content | Use 25-30px gap between diagram title and first element |
 | Sub-concept crammed into main diagram | Create separate focused diagrams for sub-concepts |
 | Callout boxes placed beside main content | Place secondary/callout elements below, not to the side |
+| Proportional scaling to make diagram smaller | Widen canvas + stretch blocks to fill — proportional scaling changes nothing (Rule 23) |
+| CSS max-width wrapper on diagram | Control size via canvas width, not CSS — wrappers break page consistency |
+| Small content centered in wide canvas | Content must stretch to fill canvas width, not float centered (Rule 23) |
+| Hardcoded box widths | Calculate from canvas: `PAIR_W = (content_w - gap) // 2` (Rule 24) |
+| Text height calculated for wrong line count | Always derive from `text.count('\n') + 1` — crops bottom lines (Rule 25) |
 
 ---
 
