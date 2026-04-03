@@ -188,6 +188,94 @@ title_color = "#ffffff"
 title_color = "#1e1e1e"
 ```
 
+### Rule 13: Title/subtitle hierarchy with dual text elements
+
+Boxes often need a title (e.g. "Business Architecture") and a subtitle (e.g. "Product & service strategy") at different font sizes and colors. Since Excalidraw bound text only supports one fontSize and one color, use **two text elements** per box:
+
+1. **Bound title text** — larger fontSize (22-24), color `#1e1e1e`, with `containerId` set to parent box
+2. **Free subtitle text** — smaller fontSize (15-16), color = **box's stroke color** (NOT gray), with `containerId: None`
+
+```python
+# Positioning math for a box with height BOX_H:
+title_h = math.ceil(title_lines * title_fontSize * 1.25)
+sub_h = math.ceil(sub_lines * sub_fontSize * 1.25)
+gap = 6  # between title and subtitle
+combined = title_h + gap + sub_h
+top_pad = (BOX_H - combined) // 2
+
+title_y = box_y + top_pad
+sub_y = title_y + title_h + gap
+
+# Title — bound to container
+rect(box_id, box_x, box_y, BOX_W, BOX_H, stroke, bg,
+     bnd=[{"id": title_id, "type": "text"}])
+txt(title_id, box_x, title_y, BOX_W, title_h,
+    title_text, 24, color="#1e1e1e", cid=box_id)
+
+# Subtitle — free-floating, uses box stroke color
+txt(sub_id, box_x, sub_y, BOX_W, sub_h,
+    sub_text, 16, color=stroke)  # NOT #868e96!
+```
+
+**Never stack two rectangles** (title rect + subtitle rect with 0px gap) to achieve hierarchy — it looks terrible.
+
+### Rule 14: Subtitle color must be the box's stroke color, not gray
+
+Gray (`#868e96`) is too dark in both light and dark mode for subtitles. Use the parent box's **stroke color** instead — it complements the box's fill color and inverts naturally in dark mode.
+
+```python
+# BAD: gray subtitle — poor contrast in both themes
+txt(sub_id, x, y, w, h, sub_text, 16, color="#868e96")
+
+# GOOD: stroke color — harmonizes with box, inverts well
+txt(sub_id, x, y, w, h, sub_text, 16, color=stroke)
+```
+
+### Rule 15: Minimum font sizes
+
+Never go below these minimums — small text becomes unreadable when the SVG renders at `width: 100%`:
+
+| Element | Minimum fontSize |
+|---|---|
+| Diagram title | 28 |
+| Section titles / box titles | 22 |
+| Body text / box labels | 20 |
+| Subtitles / descriptions | 15 |
+| Small pills / badges | 17 |
+
+### Rule 16: Prefer vertical flows over horizontal for multi-step processes
+
+Horizontal flows force small boxes and tiny fonts to fit everything in one row. Vertical flows (top to bottom) allow wider boxes with larger text. Place parallel processes as side-by-side vertical columns.
+
+```python
+# BAD: horizontal flow — 6 boxes at 130w with 17px font
+# Source → Extract → Transform → Load → DW → Serving
+
+# GOOD: vertical flow — boxes at 160w with 20px font
+# Source
+#   ↓
+# Extract
+#   ↓
+# Transform
+#   ↓  ...
+```
+
+### Rule 17: Arrow spacing — minimum 50px gap
+
+Arrows need room to breathe. Leave at least 50px vertical gap between source and target boxes for downward arrows (or 50px horizontal for side arrows). Compact gaps make arrows look cramped and the diagram cluttered.
+
+### Rule 18: Title-to-content spacing — 25-30px
+
+The gap between the diagram title and the first element should be ~25-30px. Too little (10px) causes overlap. Too much (50px) creates a visible blank gap that looks like a rendering error.
+
+### Rule 19: Separate diagrams for sub-concepts
+
+Don't cram everything into one diagram. If a concept (e.g. Data Marts) deserves visual explanation but doesn't fit cleanly in the main flow diagram, create a **separate focused diagram** and embed it in the relevant content section.
+
+### Rule 20: Secondary/callout elements go below, not beside
+
+Decision types, callouts, and supplementary boxes should be placed **below** the main diagram content, not to the side. Side placement creates an awkward wide aspect ratio and disconnects the callout from the visual flow.
+
 ### Rule 10: Line-wrap long text and pad from box edges
 
 Text that fits at a given font size in standard fonts may overflow in Excalidraw's Virgil font, which is significantly wider. Pre-wrap long titles with `\n` and pad text inward from box edges:
@@ -353,6 +441,15 @@ Arrow `points` are **relative to the element's x,y**. Always start with `[0,0]`.
 | Hachure fill makes overlaid text hard to read | Use `fillStyle: "solid"` for blocks containing text |
 | Title not centered over diagram | Calculate diagram width, set `title_x = (diagram_w - title_w) // 2` with `textAlign: "center"` |
 | Paired elements have inconsistent sizing | Use same width, height, and fontSize for related/parallel elements |
+| Title and subtitle at same font size/color | Use dual text elements: bound title (larger, #1e1e1e) + free subtitle (smaller, box stroke color) |
+| Subtitle text in gray (#868e96) | Use box's stroke color instead — gray is unreadable in both themes |
+| Two stacked rectangles for title/subtitle hierarchy | Never stack rects — use one rect with two text elements inside |
+| Horizontal flow with tiny font for multi-step processes | Use vertical flows — allows wider boxes and 20px+ font |
+| Font size below 20px for body text | Minimum: 28 title, 22 box titles, 20 body, 17 pills, 15 subtitles |
+| Arrows cramped between boxes | Leave at least 50px gap between source and target boxes |
+| Title too close or too far from content | Use 25-30px gap between diagram title and first element |
+| Sub-concept crammed into main diagram | Create separate focused diagrams for sub-concepts |
+| Callout boxes placed beside main content | Place secondary/callout elements below, not to the side |
 
 ---
 
