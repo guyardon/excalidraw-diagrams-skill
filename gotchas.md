@@ -20,3 +20,4 @@ Scan this before exporting any diagram. These are the non-obvious failures that 
 | `autoResize` overrides calculated text height | Set `"autoResize": false` for free-floating text with manually calculated height | 25 |
 | Increased font sizes / spacing had no visible effect | CSS `max-height` on `.diagram` is the bottleneck, not the Excalidraw coordinates. Increase `max-height` (650px recommended; 500px clips, 800px dominates page) | 1, 15 |
 | Diagram renders too small despite large coordinates | The SVG aspect ratio combined with `max-height` + `object-fit: contain` scales the image down. Either increase `max-height` or make the canvas wider to improve the aspect ratio | 1, 23 |
+| Tall vertical diagram (5+ stacked boxes) looks tiny | Default 650px `max-height` squishes tall diagrams. Add inline `style="max-height: 900px;"` on the `<img>` tags for that specific diagram | 1, 16 |

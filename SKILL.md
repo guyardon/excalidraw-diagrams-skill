@@ -63,6 +63,13 @@ CSS (adapt selectors for your theme toggle mechanism):
 
 **Critical:** The `max-height` caps the rendered diagram height. If diagrams appear too small or changes to internal coordinates have no visible effect, this is likely the bottleneck — not the Excalidraw coordinates. 650px is a good balance; 500px clips most diagrams, 800px dominates the page.
 
+**Tall vertical diagrams:** When a diagram has many vertically stacked elements (5+ boxes with arrows and section titles), the default 650px `max-height` will shrink it too much. Override per-diagram with an inline style:
+```html
+<img src="/images/diagrams/diagram-dark.svg" alt="..." class="diagram diagram-dark" style="max-height: 900px;" />
+<img src="/images/diagrams/diagram.svg" alt="..." class="diagram diagram-light" style="max-height: 900px;" />
+```
+Rule of thumb: 650px for 3-4 vertical blocks, 900px for 5-6+ vertical blocks with arrows and titles.
+
 ---
 
 ## Layout Rules Summary
