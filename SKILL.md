@@ -72,6 +72,8 @@ CSS (adapt selectors for your theme toggle mechanism):
 ```
 Rule of thumb: 650px for 3-4 vertical blocks, 900px for 5-6+ vertical blocks with arrows and titles.
 
+**Preferred fix — narrow the canvas:** Inline `max-height` only works when height is the binding constraint. Since diagrams use `width: 100%`, a wide canvas (900px+) will be width-bound and render short regardless of `max-height`. The better fix is to use a narrower canvas (600-700px) so the aspect ratio naturally produces a taller render. Only use `max-height` overrides as a last resort.
+
 ---
 
 ## Layout Rules Summary
