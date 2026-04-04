@@ -46,6 +46,8 @@ npx excalidraw-brute-export-cli -i diagram.excalidraw \
 
 ### 4. Embed with theme switching
 
+Place diagrams **below** the text content of the section they illustrate, not above, unless the user specifies otherwise.
+
 In markdown:
 ```html
 <img src="/images/diagrams/diagram-dark.svg" alt="..." class="diagram diagram-dark" />
