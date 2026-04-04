@@ -54,12 +54,14 @@ In markdown:
 
 CSS (adapt selectors for your theme toggle mechanism):
 ```css
-.diagram { width: 100%; border-radius: 12px; margin: 1rem 0; }
+.diagram { width: 100%; max-height: 650px; object-fit: contain; border-radius: 12px; margin: 1rem 0; }
 .diagram-light { display: none; }
 .diagram-dark { display: block; }
 [data-theme="light"] .diagram-light { display: block; }
 [data-theme="light"] .diagram-dark { display: none; }
 ```
+
+**Critical:** The `max-height` caps the rendered diagram height. If diagrams appear too small or changes to internal coordinates have no visible effect, this is likely the bottleneck — not the Excalidraw coordinates. 650px is a good balance; 500px clips most diagrams, 800px dominates the page.
 
 ---
 
@@ -83,9 +85,9 @@ These 25 rules prevent the most common iteration cycles. The table below gives t
 | 12 | Identical dims for related elements | Inconsistent sizing implies unequal importance |
 | 13 | Title + subtitle = two text elements | Bound title (large) + free subtitle (small, stroke-colored) in one rect |
 | 14 | Subtitle color = stroke color | Not gray — stroke color harmonizes and inverts naturally |
-| 15 | Minimum font sizes | 28 title / 22 headers / 20 body / 17 pills / 15 subtitles |
+| 15 | Recommended font sizes | 32 title / 24-26 headers / 22 body / 20 pills / 17-19 subtitles |
 | 16 | Prefer vertical flows | Horizontal forces narrow boxes; vertical decouples width from step count |
-| 17 | Min 50px arrow gap | Below 50px, arrows are tiny stubs; 60-70px for fan-out |
+| 17 | Min 70px arrow gap | Below 50px, arrows are tiny stubs; 70-85px recommended for readable spacing |
 | 18 | Title-to-content: 25-30px | Less than 15px merges visually; more than 40px looks empty |
 | 19 | Separate diagrams for sub-concepts | One clear focus per diagram — don't cram |
 | 20 | Secondary elements go below | Side placement forces wide aspect ratio |

@@ -18,3 +18,5 @@ Scan this before exporting any diagram. These are the non-obvious failures that 
 | Content floats centered with side whitespace | Content must fill canvas width — no centered narrow blocks in wide canvas | 23, 24 |
 | Bottom lines of multi-line text cropped | Height calculated for wrong line count — use `text.count('\n') + 1` | 25 |
 | `autoResize` overrides calculated text height | Set `"autoResize": false` for free-floating text with manually calculated height | 25 |
+| Increased font sizes / spacing had no visible effect | CSS `max-height` on `.diagram` is the bottleneck, not the Excalidraw coordinates. Increase `max-height` (650px recommended; 500px clips, 800px dominates page) | 1, 15 |
+| Diagram renders too small despite large coordinates | The SVG aspect ratio combined with `max-height` + `object-fit: contain` scales the image down. Either increase `max-height` or make the canvas wider to improve the aspect ratio | 1, 23 |

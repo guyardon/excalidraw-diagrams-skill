@@ -201,7 +201,7 @@ txt(sub_id, box_x, sub_y, BOX_W, sub_h,
     sub_text, 16, color=stroke)
 ```
 
-Box height for 1-line title (fontSize 24) + 1-line subtitle (fontSize 16): minimum ~80px.
+Box height for 1-line title (fontSize 24-26) + 1-line subtitle (fontSize 17-19): recommended 95-110px. At 80px, content looks cramped after CSS max-height scaling.
 
 ## Rule 14: Subtitle color must be the box's stroke color, not gray
 
@@ -215,17 +215,19 @@ txt(sub_id, x, y, w, h, sub_text, 16, color="#868e96")
 txt(sub_id, x, y, w, h, sub_text, 16, color=stroke)
 ```
 
-## Rule 15: Minimum font sizes
+## Rule 15: Recommended font sizes
 
-SVGs render at `width: 100%`. On a typical content column (~700px), small fonts become illegible. Hard minimums:
+SVGs render at `width: 100%` and are typically capped by a CSS `max-height` (650px recommended). Diagrams need generous font sizes to remain legible after scaling.
 
-| Element | Min fontSize | Typical fontSize |
+| Element | Min fontSize | Recommended fontSize |
 |---|---|---|
-| Diagram title | 28 | 28 |
-| Section headers / box titles (Rule 13) | 22 | 22-24 |
-| Box text / body labels (simple single-text boxes) | 20 | 20-22 |
-| Small pills / badges / tags | 17 | 17-18 |
-| Subtitles / descriptions (Rule 13) | 15 | 15-16 |
+| Diagram title | 28 | 32-34 |
+| Section headers / box titles (Rule 13) | 22 | 24-26 |
+| Box text / body labels (simple single-text boxes) | 20 | 22 |
+| Small pills / badges / tags | 17 | 20 |
+| Subtitles / descriptions (Rule 13) | 15 | 17-19 |
+
+Use the **recommended** sizes as your starting point, not the minimums. The minimums are hard floors — diagrams at minimum sizes look cramped after CSS scaling.
 
 **When font size feels too large, the layout is wrong** — rethink the layout (switch to vertical per Rule 16, break into separate diagrams per Rule 19) rather than shrinking the font.
 
@@ -244,16 +246,19 @@ COL2_X = COL1_X + BOX_W + COL_GAP   # 280
 COL3_X = COL2_X + BOX_W + COL_GAP   # 520
 ```
 
-## Rule 17: Arrow spacing — minimum 50px gap between connected elements
+## Rule 17: Arrow spacing — minimum 70px gap between connected elements
 
-The gap between source bottom and target top must be at least **50px**. Below 50px, arrows appear as tiny stubs. For fan-out patterns (one -> many), use 60-70px:
+The gap between source bottom and target top should be at least **70px** for readable arrow spacing. Below 50px, arrows appear as tiny stubs. For fan-out patterns (one -> many), use 80-85px:
 
 ```python
-# BAD: 16px gap
+# BAD: 16px gap — arrow is invisible stub
 PILL_GAP_Y = 16
 
-# GOOD: 50px gap
+# MINIMUM: 50px — functional but tight
 PILL_GAP_Y = 50
+
+# RECOMMENDED: 70-85px — comfortable spacing after CSS scaling
+PILL_GAP_Y = 70
 ```
 
 ## Rule 18: Title-to-content spacing — 25-30px
