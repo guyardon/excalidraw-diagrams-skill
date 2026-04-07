@@ -2,6 +2,20 @@
 
 A [Claude Code](https://claude.ai/claude-code) skill for programmatically generating hand-drawn Excalidraw diagrams and embedding them in static sites.
 
+## Example output
+
+### Data Engineering Lifecycle
+
+![Data Engineering Lifecycle diagram](screenshots/data-engineering-lifecycle-dark.svg)
+
+### Data Lakehouse Architecture
+
+![Data Lakehouse Architecture diagram](screenshots/lakehouse-architecture-dark.svg)
+
+### Replication vs Partitioning
+
+![Replication vs Partitioning diagram](screenshots/replication-vs-partitioning-dark.svg)
+
 ## What it does
 
 Teaches Claude how to:
